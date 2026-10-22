@@ -1,0 +1,1 @@
+export { MainMenuCard } from './ui/MainMenu';
