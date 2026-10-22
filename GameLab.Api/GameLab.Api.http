@@ -1,0 +1,6 @@
+@GameLab.Api_HostAddress = http://localhost:5218
+
+GET {{GameLab.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
