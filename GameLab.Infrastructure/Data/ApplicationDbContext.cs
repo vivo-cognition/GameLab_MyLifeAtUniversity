@@ -9,6 +9,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Subject> Subjects => Set<Subject>();
     public DbSet<StudentSubjectPerformance> SubjectPerformances => Set<StudentSubjectPerformance>();
     public DbSet<ScheduleDay> ScheduleDays => Set<ScheduleDay>();
+    public DbSet<AttestationQuestion> AttestationQuestions => Set<AttestationQuestion>();
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
     }
@@ -58,6 +59,20 @@ public class ApplicationDbContext : DbContext
 
             entity.Property(e => e.SubjectIds)
                   .HasColumnType("uuid[]");
+        });
+
+        modelBuilder.Entity<AttestationQuestion>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Text).IsRequired().HasMaxLength(500);
+
+            entity.Property(e => e.Options)
+                  .HasColumnType("text[]");
+
+            entity.HasOne(e => e.Subject)
+                  .WithMany()
+                  .HasForeignKey(e => e.SubjectId)
+                  .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }

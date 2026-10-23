@@ -238,4 +238,48 @@ public class GameController : ControllerBase
             return BadRequest("Не удалось синхронизировать параметры персонажа.");
         }
     }
+    [HttpGet("{studentId}/attestation/question/{subjectId:guid}")]
+    public async Task<IActionResult> GetAttestationQuestion(Guid studentId, Guid subjectId)
+    {
+        try
+        {
+            var question = await _gameEngineService.GetQuestionForStudentAsync(studentId, subjectId);
+            if (question == null) return NotFound("Для данного предмета не найдено вопросов в банке.");
+
+            var response = new QuestionResponseDto
+            {
+                Id = question.Id,
+                Text = question.Text,
+                Options = question.Options
+            };
+
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Ошибка получения вопроса аттестации");
+            return BadRequest("Не удалось загрузить вопрос.");
+        }
+    }
+
+    [HttpPost("submit-attestation")]
+    public async Task<IActionResult> SubmitAttestation([FromBody] SubmitAnswerDto dto)
+    {
+        try
+        {
+            var updatedStudent = await _gameEngineService.SubmitAttestationAnswerAsync(
+                dto.StudentId,
+                dto.QuestionId,
+                dto.SelectedOptionIndex
+            );
+
+            var response = _mapper.Map<StudentResponseDto>(updatedStudent);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Ошибка при обработке ответа на аттестацию");
+            return BadRequest($"Не удалось зафиксировать результат: {ex.Message}");
+        }
+    }
 }

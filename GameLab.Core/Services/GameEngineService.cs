@@ -8,11 +8,12 @@ public class GameEngineService : IGameEngineService
 {
     private readonly IStudentRepository _studentRepository;
     private readonly ISubjectRepository _subjectRepository;
-
-    public GameEngineService(IStudentRepository studentRepository, ISubjectRepository subjectRepository)
+    private readonly IQuestionRepository _questionRepository;
+    public GameEngineService(IStudentRepository studentRepository, ISubjectRepository subjectRepository, IQuestionRepository questionRepository)
     {
         _studentRepository = studentRepository;
         _subjectRepository = subjectRepository;
+        _questionRepository = questionRepository;
     }
 
     public async Task<Student> InitializeNewGameAsync(string studentName, string specialization, int subjectsCount)
@@ -82,6 +83,38 @@ public class GameEngineService : IGameEngineService
         var student = await _studentRepository.GetByIdAsync(studentId);
         if (student == null) throw new Exception("Студент не найден");
         student.PerformAction(actionType, subjectId);
+
+        await _studentRepository.UpdateAsync(student);
+        await _studentRepository.SaveChangesAsync();
+
+        return student;
+    }
+    public async Task<AttestationQuestion?> GetQuestionForStudentAsync(Guid studentId, Guid subjectId)
+    {
+        return await _questionRepository.GetRandomQuestionBySubjectAsync(subjectId);
+    }
+    public async Task<Student> SubmitAttestationAnswerAsync(Guid studentId, Guid questionId, int selectedOptionIndex)
+    {
+        var student = await _studentRepository.GetByIdAsync(studentId);
+        if (student == null) throw new Exception("Студент не найден");
+
+        var question = await _questionRepository.GetByIdAsync(questionId);
+        if (question == null) throw new Exception("Вопрос не найден");
+
+        var performance = student.Subscriptions.FirstOrDefault(s => s.SubjectId == question.SubjectId);
+
+        if (selectedOptionIndex == question.CorrectOptionIndex)
+        {
+            student.IncreaseIncome(student.MonthlyIncome * 0.10m);
+            if (performance != null)
+            {
+                performance.IncreaseProgress(15);
+            }
+        }
+        else if (performance == null || performance.AcademicProgress < 20.0 || student.Intelligence < 10)
+        {
+            student.DeductIncome(student.MonthlyIncome * 0.15m);
+        }
 
         await _studentRepository.UpdateAsync(student);
         await _studentRepository.SaveChangesAsync();
