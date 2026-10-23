@@ -23,10 +23,41 @@ namespace GameLab.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("GameLab.Core.Entities.AttestationQuestion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("CorrectOptionIndex")
+                        .HasColumnType("integer");
+
+                    b.PrimitiveCollection<List<string>>("Options")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
+                    b.Property<Guid>("SubjectId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SubjectId");
+
+                    b.ToTable("AttestationQuestions");
+                });
+
             modelBuilder.Entity("GameLab.Core.Entities.ScheduleDay", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("AttestationSubjectId")
                         .HasColumnType("uuid");
 
                     b.Property<int>("DayNumber")
@@ -38,7 +69,7 @@ namespace GameLab.Infrastructure.Migrations
                     b.Property<Guid>("StudentId")
                         .HasColumnType("uuid");
 
-                    b.PrimitiveCollection<List<Guid>>("SubjectIds")
+                    b.PrimitiveCollection<Guid[]>("SubjectIds")
                         .IsRequired()
                         .HasColumnType("uuid[]");
 
@@ -128,6 +159,17 @@ namespace GameLab.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Subjects");
+                });
+
+            modelBuilder.Entity("GameLab.Core.Entities.AttestationQuestion", b =>
+                {
+                    b.HasOne("GameLab.Core.Entities.Subject", "Subject")
+                        .WithMany()
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Subject");
                 });
 
             modelBuilder.Entity("GameLab.Core.Entities.ScheduleDay", b =>

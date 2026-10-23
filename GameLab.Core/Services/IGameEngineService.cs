@@ -12,5 +12,7 @@ public interface IGameEngineService
     Task<Student?> UpdateStudentAsync(Guid studentId, string name, int intelligence, decimal balance);
     Task<Student> ProcessActionAsync(Guid studentId, ActionType actionType, Guid? subjectId);
     Task<Student?> GetStudentByIdAsync(Guid studentId);
+    Task<AttestationQuestion?> GetQuestionForStudentAsync(Guid studentId, Guid subjectId);
+    Task<Student> SubmitAttestationAnswerAsync(Guid studentId, Guid questionId, int selectedOptionIndex);
 
 }

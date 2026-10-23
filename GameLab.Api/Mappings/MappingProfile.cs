@@ -20,6 +20,14 @@ public class MappingProfile : Profile
               {
                   DayNumber = day.DayNumber,
                   IsAttestationDay = day.IsAttestationDay,
+                  AttestationSubjectId = day.AttestationSubjectId,
+
+                  AttestationSubjectTitle = day.AttestationSubjectId.HasValue
+                      ? src.Subscriptions
+                           .Where(s => s.SubjectId == day.AttestationSubjectId.Value)
+                           .Select(s => s.Subject.Title)
+                           .FirstOrDefault()
+                      : null,
 
                   Subjects = day.SubjectIds
                       .Select(id => new SubjectResponseDto

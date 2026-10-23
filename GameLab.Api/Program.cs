@@ -41,6 +41,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddScoped<IStudentRepository, EfStudentRepository>();
 builder.Services.AddScoped<ISubjectRepository, EfSubjectRepository>();
 builder.Services.AddScoped<IGameEngineService, GameEngineService>();
+builder.Services.AddScoped<IQuestionRepository, EfQuestionRepository>();
 
 // Регистрируем профили AutoMapper
 builder.Services.AddAutoMapper(typeof(GameLab.Api.Mappings.MappingProfile));
