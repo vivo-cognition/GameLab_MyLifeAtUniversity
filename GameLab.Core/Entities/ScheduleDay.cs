@@ -8,12 +8,14 @@ public class ScheduleDay
     public Guid[] SubjectIds { get; private set; } = Array.Empty<Guid>();
     public bool IsAttestationDay { get; private set; }
 
-    public ScheduleDay(Guid studentId, int dayNumber, Guid[] subjectIds, bool isAttestationDay)
+    public Guid? AttestationSubjectId { get; private set; }
+    public ScheduleDay(Guid studentId, int dayNumber, Guid[] subjectIds, bool isAttestationDay, Guid? attestationSubjectId = null)
     {
         Id = Guid.NewGuid();
         StudentId = studentId;
         DayNumber = dayNumber;
         SubjectIds = subjectIds ?? Array.Empty<Guid>();
         IsAttestationDay = isAttestationDay;
+        AttestationSubjectId = attestationSubjectId;
     }
 }

@@ -66,6 +66,7 @@ namespace GameLab.Core.Entities
         {
             Balance += MonthlyIncome;
         }
+        public void IncreaseIncome(decimal bonus) => MonthlyIncome += bonus;
         public void DeductIncome(decimal penalty)
         {
             MonthlyIncome = Math.Max(0, MonthlyIncome - penalty);
@@ -81,11 +82,15 @@ namespace GameLab.Core.Entities
             }
 
             bool isAttestationDay = CurrentDay % 10 == 0;
+            Guid? attestationSubjectId = null;
 
             if (isAttestationDay && Subscriptions.Any())
             {
+                var randomSubscription = Subscriptions[random.Next(Subscriptions.Count)];
+                attestationSubjectId = randomSubscription.SubjectId;
+
                 double averageProgress = Subscriptions.Average(s => s.AcademicProgress);
-                if (averageProgress < 40.0)
+                if (randomSubscription.AcademicProgress < 30.0 || Intelligence < 12)
                 {
                     DeductIncome(MonthlyIncome * 0.15m);
                 }
@@ -97,7 +102,7 @@ namespace GameLab.Core.Entities
                 .OrderBy(x => random.Next())
                 .Take(pairsCount)
                 .ToArray();
-            var newDay = new ScheduleDay(Id, CurrentDay, todaysSubjects, isAttestationDay);
+            var newDay = new ScheduleDay(Id, CurrentDay, todaysSubjects, isAttestationDay, attestationSubjectId);
             ActiveSchedule.Add(newDay); 
         }
         public void UpdateDetails(string newName, int newIntelligence, decimal newBalance)
