@@ -21,7 +21,8 @@ export const StudentActionsWidget = () => {
   } = useStudentActions(todaySubjects);
 
   return (
-    <div className="w-full space-y-6">
+   <div className="w-full bg-white border border-slate-100 rounded-3xl p-6 shadow-[0_20px_50px_-12px_rgba(148,163,184,0.08)] h-full flex flex-col justify-between space-y-6">
+
       <div className="text-center md:text-left">
         <h2 className="text-base font-black text-slate-700 tracking-wide uppercase">
           Что делаем сегодня?

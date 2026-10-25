@@ -37,22 +37,10 @@ export const studentActions = {
   },
 
   fetchFullStudent: async (save: SaveLookupItem): Promise<Student> => {
-    try {
-      return await studentApi.getStudentById(save.id);
-    } catch (error) {
-      console.error('Не удалось загрузить студента с бэкенда, откат на базовую структуру', error);
-      return {
-        id: save.id,
-        name: save.name,
-        specialization: save.specialization,
-        intelligence: save.intelligence,
-        energy: save.energy,
-        currentDay: save.currentDay,
-        balance: save.balance,
-        monthlyIncome: 150,
-        subscriptions: [],
-        activeSchedule: []
-      } as Student;
+    if (save.isAutoSave) {
+      return studentStorage.fetchLocalFullStudent();
     }
+
+    return await studentApi.getStudentById(save.id);
   }
 };

@@ -1,4 +1,4 @@
-import type { SaveLookupItem } from '../model/types';
+import type { SaveLookupItem, Student } from '../model/types';
 
 export const studentStorage = {
   loadLocalSave: (): SaveLookupItem | null => {
@@ -28,6 +28,10 @@ export const studentStorage = {
       energy: student.energy,
       currentDay: student.currentDay,
       balance: student.balance,
+      visitedSubjectIds: student.visitedSubjectIds || [],
+      passedAttestationSubjectIds: student.passedAttestationSubjectIds || [],
+      activeSchedule: student.activeSchedule || [],
+      subscriptions: student.subscriptions || [],
       savedAt: new Date().toLocaleString()
     }));
   },
@@ -35,4 +39,9 @@ export const studentStorage = {
   deleteLocalSave: (): void => {
     localStorage.removeItem('university_game_autosave');
   },
+  fetchLocalFullStudent: (): Student => {
+    const localSaveData = localStorage.getItem('university_game_autosave');
+    if (!localSaveData) throw new Error('Автосохранение повреждено или отсутствует');
+    return JSON.parse(localSaveData) as Student;
+  }
 };

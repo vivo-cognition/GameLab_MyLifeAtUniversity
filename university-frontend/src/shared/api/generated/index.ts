@@ -10,6 +10,7 @@ export type { OpenAPIConfig } from './core/OpenAPI';
 export type { ActionType } from './models/ActionType';
 export type { GameActionDto } from './models/GameActionDto';
 export type { StartGameDto } from './models/StartGameDto';
+export type { SubmitAnswerDto } from './models/SubmitAnswerDto';
 export type { UpdateStudentDto } from './models/UpdateStudentDto';
 export type { WeatherForecast } from './models/WeatherForecast';
 

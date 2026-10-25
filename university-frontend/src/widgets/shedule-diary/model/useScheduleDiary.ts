@@ -9,20 +9,21 @@ export const useScheduleDiary = (studentId: string, currentDay: number) => {
 
   useEffect(() => {
     const fetchDaySchedule = async () => {
+      if (!studentId) return;
       setIsLoading(true);
       try {
         const data = await studentApi.getScheduleDay(studentId, currentDay);
-        setSchedule(data);
+        const cleanData = Array.isArray(data) ? data[0] : data;
+        setSchedule(cleanData);
       } catch (err: any) {
-        toast.error(err.body?.message || 'Не удалось загрузить расписание на сегодня');
+        console.error('Ошибка в дневнике расписания:', err);
+        toast.error('Не удалось загрузить расписание на сегодня');
       } finally {
         setIsLoading(false);
       }
     };
 
-    if (studentId) {
-      fetchDaySchedule();
-    }
+    fetchDaySchedule();
   }, [studentId, currentDay]);
 
   return {

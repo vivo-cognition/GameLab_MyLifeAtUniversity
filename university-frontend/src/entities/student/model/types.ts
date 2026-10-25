@@ -11,20 +11,9 @@ export interface PerformanceResponse {
 export interface ScheduleDayResponse {
   dayNumber: number;
   isAttestationDay: boolean;
+  attestationSubjectId: string | null;
+  attestationSubjectTitle: string | null; 
   subjects: SubjectResponse[];
-}
-
-export interface Student {
-  id: string;
-  name: string;
-  specialization: string;
-  intelligence: number;
-  energy: number;
-  currentDay: number;
-  balance: number;
-  monthlyIncome: number;
-  subscriptions: PerformanceResponse[];
-  activeSchedule: ScheduleDayResponse[];
 }
 
 export interface SaveLookupItem {
@@ -43,4 +32,25 @@ export interface GameActionDto {
   studentId: string;
   actionType: 'AttendClass' | 'SelfStudy' | 'Rest' | 'SkipClass';
   subjectId?: string;
+}
+
+export interface AttestationQuestionResponse {
+  id: string;
+  text: string;
+  options: string[];
+}
+
+export interface Student {
+  id: string;
+  name: string;
+  specialization: string;
+  intelligence: number;
+  energy: number;
+  currentDay: number;
+  balance: number;
+  monthlyIncome: number;
+  subscriptions: PerformanceResponse[];
+  activeSchedule: ScheduleDayResponse[];
+  visitedSubjectIds: string[];
+  passedAttestationSubjectIds: string[];
 }

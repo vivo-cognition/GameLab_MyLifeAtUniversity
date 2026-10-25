@@ -1,22 +1,31 @@
 import { GameService } from '../../../shared/api/generated/services/GameService';
 import type { GameActionDto } from '../../../shared/api/generated/models/GameActionDto';
+import type { SubmitAnswerDto } from '../../../shared/api/generated/models/SubmitAnswerDto';
+import type { UpdateStudentDto } from '../../../shared/api/generated/models/UpdateStudentDto';
 import type { Student, ScheduleDayResponse, SaveLookupItem } from '../model/types';
 
 export const studentApi = {
   advanceDay: async (studentId: string): Promise<Student> => {
-    return await GameService.postApiGameNextDay( studentId );
+    return await GameService.postApiGameNextDay(studentId);
   },
 
   getScheduleDay: async (studentId: string, dayNumber: number): Promise<ScheduleDayResponse> => {
-    return await GameService.getApiGameScheduleDay( studentId, dayNumber );
+    return await GameService.getApiGameScheduleDay(studentId, dayNumber);
   },
 
   performAction: async (dto: GameActionDto): Promise<Student> => {
-    return await GameService.postApiGameAction( dto );
+    return await GameService.postApiGameAction(dto);
   },
 
-  getStudentById: async (studentId: string): Promise<Student> => {
-    return await GameService.getApiGame( studentId );
+  getAttestationQuestion: async (studentId: string, subjectId: string): Promise<any> => {
+    return await GameService.getApiGameAttestationQuestion(studentId, subjectId);
+  },
+  
+  getStudentById: async (id: string): Promise<Student> => {
+    return await GameService.getApiGame(id);
+  },
+  submitAttestationAnswer: async (dto: SubmitAnswerDto): Promise<Student> => {
+    return await GameService.postApiGameSubmitAttestation(dto);
   },
 
   getServerSaves: async (): Promise<SaveLookupItem[]> => {
@@ -37,17 +46,14 @@ export const studentApi = {
   },
 
   deleteServerSave: async (id: string): Promise<void> => {
-    await GameService.deleteApiGame( id );
+    await GameService.deleteApiGame(id);
   },
 
-  updateServerSave: async (id: string, data: { name: string; intelligence: number; balance: number }): Promise<Student> => {
-    return await GameService.patchApiGame(
-      id, 
-      {
-        name: data.name,
-        intelligence: data.intelligence,
-        balance: data.balance
-      }
-    ) as any;
+  updateServerSave: async (id: string, data: { name: string; intelligence: number; balance: number }): Promise<void> => {
+    await GameService.patchApiGame(id, {
+      name: data.name,
+      intelligence: data.intelligence,
+      balance: data.balance
+    });
   }
 };

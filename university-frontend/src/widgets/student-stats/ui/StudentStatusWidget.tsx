@@ -79,34 +79,28 @@ export const StudentStatsWidget = () => {
         </div>
       </div>
 
-      {/* Финансовый сектор */}
-      <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 grid grid-cols-2 gap-4 divide-x divide-slate-200/60">
-        {/* Баланс */}
-        <div className="flex flex-col space-y-1">
+      <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 grid grid-cols-12 gap-2 divide-x divide-slate-200/60">
+        
+        <div className="col-span-7 flex flex-col space-y-1 min-w-0">
           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide flex items-center gap-1">
-            <svg className="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-            </svg>
             Баланс
           </span>
-          <span className="text-lg font-black text-slate-800 tracking-tight">
-            {student.balance.toLocaleString('ru-RU')} BYN
+          <span className="text-lg font-black text-slate-800 tracking-tight truncate">
+            {(student?.balance ?? 0).toLocaleString('ru-RU')} BYN
           </span>
         </div>
-
-        {/* Доход */}
-        <div className="flex flex-col space-y-1 pl-4">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide flex items-center gap-1">
-            <svg className="w-3.5 h-3.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-            </svg>
+=
+        <div className="col-span-5 flex flex-col space-y-1 pl-3 min-w-0">
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide flex items-center gap-1 truncate">
             Доход (мес.)
           </span>
-          <span className="text-base font-bold text-emerald-500 tracking-tight">
-            +{student.monthlyIncome.toLocaleString('ru-RU')} BYN
+          <span className="text-base font-bold text-emerald-500 tracking-tight truncate">
+            {(student?.monthlyIncome ?? 0).toLocaleString('ru-RU')} BYN
           </span>
         </div>
+        
       </div>
+
     </div>
   );
 };

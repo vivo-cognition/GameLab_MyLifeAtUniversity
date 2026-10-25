@@ -4,6 +4,7 @@
 /* eslint-disable */
 import type { GameActionDto } from '../models/GameActionDto';
 import type { StartGameDto } from '../models/StartGameDto';
+import type { SubmitAnswerDto } from '../models/SubmitAnswerDto';
 import type { UpdateStudentDto } from '../models/UpdateStudentDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -158,6 +159,40 @@ export class GameService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/Game/action',
+            body: requestBody,
+            mediaType: 'application/json',
+        });
+    }
+    /**
+     * @param studentId
+     * @param subjectId
+     * @returns any OK
+     * @throws ApiError
+     */
+    public static getApiGameAttestationQuestion(
+        studentId: string,
+        subjectId: string,
+    ): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/Game/{studentId}/attestation/question/{subjectId}',
+            path: {
+                'studentId': studentId,
+                'subjectId': subjectId,
+            },
+        });
+    }
+    /**
+     * @param requestBody
+     * @returns any OK
+     * @throws ApiError
+     */
+    public static postApiGameSubmitAttestation(
+        requestBody: SubmitAnswerDto,
+    ): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/Game/submit-attestation',
             body: requestBody,
             mediaType: 'application/json',
         });
