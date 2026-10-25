@@ -23,8 +23,13 @@ public class EfStudentRepository : IStudentRepository
     }
     public async Task<IEnumerable<Student>> GetAllAsync()
     {
-        return await _context.Students.ToListAsync();
+        return await _context.Students
+            .Include(s => s.Subscriptions)
+            .ThenInclude(sub => sub.Subject)
+            .Include(s => s.ActiveSchedule)
+            .ToListAsync();
     }
+
     public async Task AddAsync(Student student)
     {
         await _context.Students.AddAsync(student);

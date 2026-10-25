@@ -18,4 +18,9 @@ public class ScheduleDay
         IsAttestationDay = isAttestationDay;
         AttestationSubjectId = attestationSubjectId;
     }
+    public void CompleteAttestation()
+    {
+        IsAttestationDay = false;
+        AttestationSubjectId = null;
+    }
 }

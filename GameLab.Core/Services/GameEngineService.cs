@@ -28,7 +28,7 @@ public class GameEngineService : IGameEngineService
         }
 
         var subjectIds = student.Subscriptions.Select(s => s.SubjectId).ToList();
-        student.AdvanceToNextDay(subjectIds);
+        student.AdvanceToNextDay();
 
         await _studentRepository.AddAsync(student);
         await _studentRepository.SaveChangesAsync();
@@ -43,7 +43,7 @@ public class GameEngineService : IGameEngineService
 
         var subjectIds = student.Subscriptions.Select(s => s.SubjectId).ToList();
 
-        student.AdvanceToNextDay(subjectIds);
+        student.AdvanceToNextDay();
         await _studentRepository.SaveChangesAsync();
 
         return student;
@@ -101,6 +101,14 @@ public class GameEngineService : IGameEngineService
         var question = await _questionRepository.GetByIdAsync(questionId);
         if (question == null) throw new Exception("Вопрос не найден");
 
+        var currentDaySchedule = student.ActiveSchedule
+            .FirstOrDefault(d => d.IsAttestationDay);
+
+        if (currentDaySchedule == null)
+        {
+            throw new Exception("Аттестация по этому предмету уже пройдена или недоступна!");
+        }
+
         var performance = student.Subscriptions.FirstOrDefault(s => s.SubjectId == question.SubjectId);
 
         if (selectedOptionIndex == question.CorrectOptionIndex)
@@ -111,10 +119,12 @@ public class GameEngineService : IGameEngineService
                 performance.IncreaseProgress(15);
             }
         }
-        else if (performance == null || performance.AcademicProgress < 20.0 || student.Intelligence < 10)
+        else
         {
             student.DeductIncome(student.MonthlyIncome * 0.15m);
         }
+
+        currentDaySchedule.CompleteAttestation();
 
         await _studentRepository.UpdateAsync(student);
         await _studentRepository.SaveChangesAsync();

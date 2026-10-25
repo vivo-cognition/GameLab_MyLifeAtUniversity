@@ -138,10 +138,23 @@ public class GameController : ControllerBase
             var day = student.ActiveSchedule.FirstOrDefault(d => d.DayNumber == dayNumber);
             if (day == null) return NotFound($"Расписание на день {dayNumber} не найдено.");
 
+            Guid? attestationSubjectId = day.IsAttestationDay ? day.SubjectIds.FirstOrDefault() : null;
+            string? attestationSubjectTitle = null;
+
+            if (attestationSubjectId.HasValue)
+            {
+                attestationSubjectTitle = student.Subscriptions
+                                               .Where(s => s.SubjectId == attestationSubjectId.Value)
+                                               .Select(s => s.Subject.Title)
+                                               .FirstOrDefault() ?? "Неизвестный предмет";
+            }
+
             var response = new ScheduleDayResponseDto
             {
                 DayNumber = day.DayNumber,
                 IsAttestationDay = day.IsAttestationDay,
+                AttestationSubjectId = attestationSubjectId,
+                AttestationSubjectTitle = attestationSubjectTitle,
                 Subjects = day.SubjectIds.Select(id => new SubjectResponseDto
                 {
                     Id = id,
@@ -173,6 +186,7 @@ public class GameController : ControllerBase
 
             var response = student.ActiveSchedule.Select(day => new ScheduleDayResponseDto
             {
+
                 DayNumber = day.DayNumber,
                 IsAttestationDay = day.IsAttestationDay,
                 Subjects = day.SubjectIds.Select(id => new SubjectResponseDto

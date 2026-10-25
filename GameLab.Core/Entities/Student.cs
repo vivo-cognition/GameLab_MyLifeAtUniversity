@@ -64,14 +64,19 @@ namespace GameLab.Core.Entities
         }
         public void ApplyMonthlyIncome()
         {
-            Balance += MonthlyIncome;
+            Balance = Math.Round(Balance + MonthlyIncome, 2, MidpointRounding.AwayFromZero);
         }
-        public void IncreaseIncome(decimal bonus) => MonthlyIncome += bonus;
+        public void IncreaseIncome(decimal bonus)
+        {
+            MonthlyIncome = Math.Round(MonthlyIncome + bonus, 2, MidpointRounding.AwayFromZero);
+        }
+
         public void DeductIncome(decimal penalty)
         {
-            MonthlyIncome = Math.Max(0, MonthlyIncome - penalty);
+            decimal newIncome = Math.Max(0, MonthlyIncome - penalty);
+            MonthlyIncome = Math.Round(newIncome, 2, MidpointRounding.AwayFromZero);
         }
-        public void AdvanceToNextDay(List<Guid> allAvailableSubjectIds)
+        public void AdvanceToNextDay()
         {
             CurrentDay++;
 
@@ -88,20 +93,21 @@ namespace GameLab.Core.Entities
             {
                 var randomSubscription = Subscriptions[random.Next(Subscriptions.Count)];
                 attestationSubjectId = randomSubscription.SubjectId;
-
-                double averageProgress = Subscriptions.Average(s => s.AcademicProgress);
-                if (randomSubscription.AcademicProgress < 30.0 || Intelligence < 12)
-                {
-                    DeductIncome(MonthlyIncome * 0.15m);
-                }
             }
 
-            int pairsCount = random.Next(1, 8);
+            var studentSubjectIds = Subscriptions.Select(s => s.SubjectId).ToList();
+            Guid[] todaysSubjects = Array.Empty<Guid>();
 
-            var todaysSubjects = allAvailableSubjectIds
-                .OrderBy(x => random.Next())
-                .Take(pairsCount)
-                .ToArray();
+            if (studentSubjectIds.Any())
+            {
+                int maxPairs = Math.Min(studentSubjectIds.Count, random.Next(1, 8));
+
+                todaysSubjects = studentSubjectIds
+                    .OrderBy(x => random.Next())
+                    .Take(maxPairs)
+                    .ToArray();
+            }
+
             var newDay = new ScheduleDay(Id, CurrentDay, todaysSubjects, isAttestationDay, attestationSubjectId);
             ActiveSchedule.Add(newDay); 
         }
